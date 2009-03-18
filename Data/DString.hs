@@ -56,7 +56,8 @@ import Data.String
 -- logging and pretty printing.
 --
 -- You can use it to efficiently show a tree for example:
--- (Note that we make use of some functions from the /string-combinators/ package.)
+-- (Note that we make use of some functions from the /string-combinators/ package:
+-- <http://hackage.haskell.org/cgi-bin/hackage-scripts/package/string-combinators>)
 --
 -- > {-# LANGUAGE OverloadedStrings #-}
 -- >
