@@ -18,6 +18,10 @@ Cabal-version:          >= 1.2
 Build-Type:             Simple
 Stability:              experimental
 
+Source-repository head
+  Type:     darcs
+  Location: http://code.haskell.org/~basvandijk/code/dstring
+
 Library
   Build-Depends:        base, dlist
   Exposed-modules:      Data.DString
