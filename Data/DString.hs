@@ -46,6 +46,30 @@ import qualified Data.DList as D
 import Data.Monoid
 import Data.String
 
+
+-- | A difference string is a function that given a string, returns
+-- the original contents of the difference string prepended at the
+-- given string.
+--
+-- This structure supports O(1) @append@ en @snoc@ operations on
+-- strings making it very usefull for append-heavy uses such as
+-- logging and pretty printing.
+--
+-- You can use it to efficiently show a tree for example:
+-- (Note that we make use of some functions from the /string-combinators/ package.)
+--
+-- > {-# LANGUAGE OverloadedStrings #-}
+-- >
+-- > import Data.DString
+-- > import Data.String.Combinators ((<+>), fromShow, paren)
+-- >
+-- > data Tree a = Leaf a | Branch (Tree a) (Tree a)
+-- >
+-- > instance Show a => Show (Tree a) where
+-- >     show = toString . go
+-- >         where
+-- >           go (Leaf x)     = "Leaf" <+> fromShow x
+-- >           go (Branch l r) = "Branch" <+> paren (go l) <+> paren (go r)
 newtype DString = DS { toDList :: D.DList Char -- ^ Convert a difference string to a difference list
                      }
 
