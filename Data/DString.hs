@@ -6,7 +6,7 @@
 --
 -- Maintainer  :  Bas van Dijk <v.dijk.bas@gmail.com>
 -- Stability   :  experimental
--- Portability :  portable (Haskell 98)
+-- Portability :  Only requires OverloadedStrings
 --
 -- Difference strings: a data structure for O(1) append on
 -- strings. Note that a DString is just a newtype wrapper around a
@@ -46,9 +46,10 @@ import qualified Data.DList as D
 import Data.Monoid
 import Data.String
 
-newtype DString = DS {toDList :: D.DList Char}
+newtype DString = DS { toDList :: D.DList Char -- ^ Convert a difference string to a difference list
+                     }
 
--- | Convert a DList of Chars to a DString
+-- | Convert a difference list of Chars to a difference string
 fromDList :: D.DList Char -> DString
 fromDList = DS
 
@@ -58,6 +59,8 @@ instance Monoid DString where
 
 instance IsString DString where
     fromString = fromDList . D.fromList
+
+-- Conversions
 
 -- | Convert a difference string back to a normal String
 toString :: DString -> String
@@ -117,3 +120,4 @@ unfoldr pf b = fromDList $ D.unfoldr pf b
 -- | Foldr over difference strings
 foldr  :: (Char -> b -> b) -> b -> DString -> b
 foldr f b = D.foldr f b . toDList
+
