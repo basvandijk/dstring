@@ -1,12 +1,12 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.DString
 -- Copyright   :  (c) 2009 Bas van Dijk
 -- License     :  BSD-style (see the file LICENSE)
---
 -- Maintainer  :  Bas van Dijk <v.dijk.bas@gmail.com>
 -- Stability   :  experimental
--- Portability :  Only requires OverloadedStrings
 --
 -- Difference strings: a data structure for O(1) append on
 -- strings. Note that a DString is just a newtype wrapper around a
@@ -22,16 +22,13 @@ module Data.DString
     -- * Conversion
     , fromDList
     , toDList
-    , toString
     , fromShowS
     , toShowS
 
     -- * Basic functions
-    , empty
     , singleton
     , cons
     , snoc
-    , append
     , concat
     , list
     , head
@@ -43,9 +40,14 @@ module Data.DString
 
 import Prelude hiding (concat, foldr, head, tail)
 import qualified Data.DList as D
-import Data.Monoid
-import Data.String
+import Data.Monoid (Monoid)
+import Data.String (IsString, fromString)
+import qualified Data.String.ToString as ToString
 
+
+--------------------------------------------------------------------------------
+-- DString
+--------------------------------------------------------------------------------
 
 -- | A difference string is a function that given a string, returns
 -- the original contents of the difference string prepended at the
@@ -72,24 +74,27 @@ import Data.String
 -- >           go (Leaf x)     = "Leaf" <+> fromShow x
 -- >           go (Branch l r) = "Branch" <+> paren (go l) <+> paren (go r)
 newtype DString = DS { toDList :: D.DList Char -- ^ Convert a difference string to a difference list
-                     }
-
--- | Convert a difference list of Chars to a difference string
-fromDList :: D.DList Char -> DString
-fromDList = DS
-
-instance Monoid DString where
-    mempty  = empty
-    mappend = append
+                     } deriving Monoid
 
 instance IsString DString where
     fromString = fromDList . D.fromList
 
--- Conversions
+instance ToString.ToString DString where
+    toString = D.toList . toDList
 
--- | Convert a difference string back to a normal String
-toString :: DString -> String
-toString = D.toList . toDList
+instance Show DString where
+    showsPrec p ds = showParen (p >= 10) $
+                     showString "Data.String.fromString " .
+                     shows (ToString.toString ds)
+
+
+--------------------------------------------------------------------------------
+-- Conversions
+--------------------------------------------------------------------------------
+
+-- | Convert a difference list of Chars to a difference string
+fromDList :: D.DList Char -> DString
+fromDList = DS
 
 -- | Convert a ShowS to a difference string
 fromShowS :: ShowS -> DString
@@ -99,9 +104,10 @@ fromShowS = fromDList . D.DL
 toShowS :: DString -> ShowS
 toShowS = D.unDL . toDList
 
--- | Create a difference string containing no characters
-empty :: DString
-empty = fromDList D.empty
+
+--------------------------------------------------------------------------------
+-- Basic functions
+--------------------------------------------------------------------------------
 
 -- | Build a difference string from a single Char
 singleton :: Char -> DString
@@ -115,10 +121,6 @@ cons c ds = fromDList $ D.cons c (toDList ds)
 snoc :: DString -> Char -> DString
 snoc ds c = fromDList $ D.snoc (toDList ds) c
 
--- | /O(1)/, Appending difference strings
-append :: DString -> DString -> DString
-x `append` y = fromDList (toDList x `D.append` toDList y)
-
 -- | /O(spine)/, Concatenate difference strings
 concat :: [DString] -> DString
 concat = fromDList . D.concat . map toDList
@@ -126,7 +128,7 @@ concat = fromDList . D.concat . map toDList
 -- | /O(length ds)/, difference list elimination, head, tail.
 list :: b -> (Char -> DString -> b) -> DString -> b
 list nill consit ds =
-  case toString ds of
+  case ToString.toString ds of
     []     -> nill
     x : xs -> consit x $ fromString xs
 
@@ -146,3 +148,5 @@ unfoldr pf b = fromDList $ D.unfoldr pf b
 foldr  :: (Char -> b -> b) -> b -> DString -> b
 foldr f b = D.foldr f b . toDList
 
+
+-- The End ---------------------------------------------------------------------
