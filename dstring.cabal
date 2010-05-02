@@ -27,4 +27,4 @@ Library
                    , dlist >= 0.5 && < 0.6
                    , to-string-class >= 0.1.2 && < 0.2
   Exposed-modules: Data.DString
-  Ghc-options:     -O2 -Wall
+  Ghc-options: -Wall
