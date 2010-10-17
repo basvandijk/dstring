@@ -47,6 +47,7 @@ module Data.DString
 -- Imports
 --------------------------------------------------------------------------------
 
+-- from base:
 import Prelude       ( fromInteger, (>=), error )
 import Data.Char     ( Char )
 import Data.Function ( ($), const, flip )

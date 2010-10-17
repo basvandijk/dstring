@@ -1,5 +1,5 @@
 Name:               dstring
-Version:            0.3.0.2
+Version:            0.3.0.3
 Synopsis:           Difference strings
 Description:
   Difference strings: a data structure for O(1) append on strings. Note that a
@@ -23,7 +23,7 @@ Source-repository head
   Location: http://code.haskell.org/~basvandijk/code/dstring
 
 Library
-  Build-Depends: base                 >= 4     && < 4.3
+  Build-Depends: base                 >= 4     && < 4.4
                , base-unicode-symbols >= 0.1.1 && < 0.3
                , dlist                >= 0.5   && < 0.6
                , to-string-class      >= 0.1.2 && < 0.2
