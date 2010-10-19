@@ -7,7 +7,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.DString
--- Copyright   :  (c) 2009 Bas van Dijk
+-- Copyright   :  (c) 2009-2010 Bas van Dijk
 -- License     :  BSD-style (see the file LICENSE)
 -- Maintainer  :  Bas van Dijk <v.dijk.bas@gmail.com>
 -- Stability   :  experimental
@@ -87,21 +87,18 @@ import qualified Data.DList as D ( cons, snoc
 -- > {-# LANGUAGE OverloadedStrings #-}
 -- >
 -- > import Data.DString (toShowS, fromShowS)
--- > import Data.String.Combinators ((<+>), paren)
+-- > import Data.String.Combinators ((<+>), parens, thenParens)
 -- >
 -- > data Tree a = Leaf a | Branch (Tree a) (Tree a)
 -- >
 -- > instance Show a => Show (Tree a) where
--- >     showsPrec prec = showParen (prec >= funAppPrec) . toShowS . go
+-- >     showsPrec prec t = toShowS $ (prec >= funAppPrec) `thenParens` go t
 -- >         where
 -- >           go (Leaf x)     = "Leaf" <+> fromShowS (showsPrec funAppPrec x)
--- >           go (Branch l r) = "Branch" <+> paren (go l) <+> paren (go r)
+-- >           go (Branch l r) = "Branch" <+> parens (go l) <+> parens (go r)
 -- >
 -- >           funAppPrec = 10
 newtype DString = DS (DList Char) deriving (Monoid, Typeable)
-
-instance IsString DString where
-    fromString = fromDList ∘ fromList
 
 instance Show DString where
     showsPrec p ds = showParen (p >= 10) $
@@ -112,6 +109,9 @@ instance Show DString where
 --------------------------------------------------------------------------------
 -- Conversions
 --------------------------------------------------------------------------------
+
+instance IsString DString where
+    fromString = fromDList ∘ fromList
 
 -- | O(n) Convert a difference string to a normal string.
 toString ∷ DString → String
