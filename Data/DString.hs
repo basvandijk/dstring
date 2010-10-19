@@ -25,6 +25,7 @@ module Data.DString
     ( DString
 
     -- * Conversion
+    , toString
     , fromDList
     , toDList
     , fromShowS
@@ -49,7 +50,7 @@ module Data.DString
 
 -- from base:
 import Prelude       ( fromInteger, (>=), error )
-import Data.Char     ( Char )
+import Data.Char     ( Char, String )
 import Data.Function ( ($), const, flip )
 import Data.List     ( map )
 import Data.Maybe    ( Maybe )
@@ -60,9 +61,6 @@ import Text.Show     ( Show, showsPrec, ShowS, showParen, showString, shows )
 
 -- from base-unicode-symbols:
 import Data.Function.Unicode ( (∘) )
-
--- from to-string-class:
-import Data.String.ToString ( ToString, toString )
 
 -- from dlist:
 import           Data.DList      ( DList(DL), unDL, toList, fromList )
@@ -100,17 +98,10 @@ import qualified Data.DList as D ( cons, snoc
 -- >           go (Branch l r) = "Branch" <+> paren (go l) <+> paren (go r)
 -- >
 -- >           funAppPrec = 10
---
--- Note that a @DString@ can be converted from and to a 'String' using the
--- 'fromString' and 'toString' methods from the 'IsString' and 'ToString'
--- classes respectively.
 newtype DString = DS (DList Char) deriving (Monoid, Typeable)
 
 instance IsString DString where
     fromString = fromDList ∘ fromList
-
-instance ToString DString where
-    toString = toList ∘ toDList
 
 instance Show DString where
     showsPrec p ds = showParen (p >= 10) $
@@ -121,6 +112,10 @@ instance Show DString where
 --------------------------------------------------------------------------------
 -- Conversions
 --------------------------------------------------------------------------------
+
+-- | O(n) Convert a difference string to a normal string.
+toString ∷ DString → String
+toString = toList ∘ toDList
 
 -- | O(1) Convert a difference list of @Char@s to a difference string.
 fromDList ∷ DList Char → DString
