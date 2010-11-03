@@ -1,4 +1,5 @@
-{-# LANGUAGE UnicodeSyntax
+{-# LANGUAGE CPP
+           , UnicodeSyntax
            , NoImplicitPrelude
            , GeneralizedNewtypeDeriving
            , DeriveDataTypeable
@@ -49,7 +50,7 @@ module Data.DString
 --------------------------------------------------------------------------------
 
 -- from base:
-import Prelude       ( fromInteger, (>=), error )
+import Prelude       ( (>=), error )
 import Data.Char     ( Char, String )
 import Data.Function ( ($), const, flip )
 import Data.List     ( map )
@@ -58,6 +59,10 @@ import Data.Monoid   ( Monoid )
 import Data.Typeable ( Typeable )
 import Data.String   ( IsString, fromString )
 import Text.Show     ( Show, showsPrec, ShowS, showParen, showString, shows )
+
+#if __GLASGOW_HASKELL__ < 701
+import Prelude       ( fromInteger )
+#endif
 
 -- from base-unicode-symbols:
 import Data.Function.Unicode ( (∘) )
