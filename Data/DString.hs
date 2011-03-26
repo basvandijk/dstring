@@ -60,7 +60,7 @@ import Data.Typeable ( Typeable )
 import Data.String   ( IsString, fromString )
 import Text.Show     ( Show, showsPrec, ShowS, showParen, showString, shows )
 
-#if __GLASGOW_HASKELL__ < 701
+#if __GLASGOW_HASKELL__ < 700
 import Prelude       ( fromInteger )
 #endif
 
