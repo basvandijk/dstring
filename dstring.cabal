@@ -19,8 +19,8 @@ Stability:     	    experimental
 Extra-source-files: LICENSE
 
 Source-repository head
-  Type:     darcs
-  Location: http://code.haskell.org/~basvandijk/code/dstring
+  Type:     git
+  Location: git://github.com/basvandijk/dstring.git
 
 Library
   Build-Depends: base                 >= 4     && < 4.4
