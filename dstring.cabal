@@ -17,7 +17,7 @@ Bug-Reports:        https://github.com/basvandijk/dstring/issues
 Cabal-version: 	    >= 1.6
 Build-Type:    	    Simple
 Stability:     	    experimental
-Extra-source-files: LICENSE
+Extra-Source-Files: README.markdown
 
 Source-repository head
   Type:     git
