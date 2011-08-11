@@ -51,7 +51,7 @@ module Data.DString
 
 -- from base:
 import Prelude       ( (>=), error )
-import Data.Char     ( Char, String )
+import Data.Char     ( Char )
 import Data.Function ( ($), const, flip )
 import Data.List     ( map )
 import Data.Maybe    ( Maybe )
@@ -59,6 +59,12 @@ import Data.Monoid   ( Monoid )
 import Data.Typeable ( Typeable )
 import Data.String   ( IsString, fromString )
 import Text.Show     ( Show, showsPrec, ShowS, showParen, showString, shows )
+
+#if MIN_VERSION_base(4,4,0)
+import Data.String   ( String )
+#else
+import Data.Char     ( String )
+#endif
 
 #if __GLASGOW_HASKELL__ < 700
 import Prelude       ( fromInteger )
