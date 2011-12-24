@@ -1,5 +1,5 @@
 Name:               dstring
-Version:            0.4.0.1
+Version:            0.4.0.2
 Synopsis:           Difference strings
 Description:
   Difference strings: a data structure for O(1) append on strings. Note that a
@@ -13,7 +13,7 @@ License-file:  	    LICENSE
 Author:        	    Bas van Dijk <v.dijk.bas@gmail.com>
 Maintainer:    	    Bas van Dijk <v.dijk.bas@gmail.com>
 Copyright:     	    2009-2011 Bas van Dijk <v.dijk.bas@gmail.com>
-Homepage:           https://github.com/basvandijk/dstring/
+Homepage:           https://github.com/basvandijk/dstring
 Bug-Reports:        https://github.com/basvandijk/dstring/issues
 Cabal-version: 	    >= 1.6
 Build-Type:    	    Simple
@@ -25,7 +25,7 @@ Source-repository head
   Location: git://github.com/basvandijk/dstring.git
 
 Library
-  Build-Depends: base                 >= 4     && < 4.5
+  Build-Depends: base                 >= 4     && < 4.6
                , base-unicode-symbols >= 0.1.1 && < 0.3
                , dlist                >= 0.5   && < 0.6
   Exposed-modules: Data.DString

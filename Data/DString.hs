@@ -187,6 +187,3 @@ unfoldr pf b = fromDList $ D.unfoldr pf b
 -- | Foldr over difference strings.
 foldr  ∷ (Char → α → α) → α → DString → α
 foldr f b = D.foldr f b ∘ toDList
-
-
--- The End ---------------------------------------------------------------------
