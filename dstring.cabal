@@ -1,5 +1,5 @@
 Name:               dstring
-Version:            0.4.0.2
+Version:            0.4.0.3
 Synopsis:           Difference strings
 Description:
   Difference strings: a data structure for O(1) append on strings. Note that a

@@ -1,9 +1,12 @@
 {-# LANGUAGE CPP
            , UnicodeSyntax
            , NoImplicitPrelude
-           , GeneralizedNewtypeDeriving
            , DeriveDataTypeable
   #-}
+
+#if __GLASGOW_HASKELL__ >= 704
+{-# LANGUAGE Safe #-}
+#endif
 
 -----------------------------------------------------------------------------
 -- |
@@ -55,7 +58,7 @@ import Data.Char     ( Char )
 import Data.Function ( ($), const, flip )
 import Data.List     ( map )
 import Data.Maybe    ( Maybe )
-import Data.Monoid   ( Monoid )
+import Data.Monoid   ( Monoid, mempty, mappend )
 import Data.Typeable ( Typeable )
 import Data.String   ( IsString, fromString )
 import Text.Show     ( Show, showsPrec, ShowS, showParen, showString, shows )
@@ -109,12 +112,16 @@ import qualified Data.DList as D ( cons, snoc
 -- >           go (Branch l r) = "Branch" <+> parens (go l) <+> parens (go r)
 -- >
 -- >           funAppPrec = 10
-newtype DString = DS (DList Char) deriving (Monoid, Typeable)
+newtype DString = DS (DList Char) deriving (Typeable)
 
 instance Show DString where
     showsPrec p ds = showParen (p >= 10) $
                      showString "Data.String.fromString " ∘
                      shows (toString ds)
+
+instance Monoid DString where
+    mempty = fromDList mempty
+    ds1 `mappend` ds2 = fromDList $ toDList ds1 `mappend` toDList ds2
 
 
 --------------------------------------------------------------------------------
