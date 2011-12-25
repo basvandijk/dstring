@@ -122,6 +122,8 @@ instance Show DString where
 instance Monoid DString where
     mempty = fromDList mempty
     ds1 `mappend` ds2 = fromDList $ toDList ds1 `mappend` toDList ds2
+    {-# INLINE mempty #-}
+    {-# INLINE mappend #-}
 
 
 --------------------------------------------------------------------------------
@@ -130,26 +132,32 @@ instance Monoid DString where
 
 instance IsString DString where
     fromString = fromDList ∘ fromList
+    {-# INLINE fromString #-}
 
 -- | O(n) Convert a difference string to a normal string.
 toString ∷ DString → String
 toString = toList ∘ toDList
+{-# INLINE toString #-}
 
 -- | O(1) Convert a difference list of @Char@s to a difference string.
 fromDList ∷ DList Char → DString
 fromDList = DS
+{-# INLINE fromDList #-}
 
 -- | O(1) Convert a difference string to a difference list.
 toDList ∷ DString → DList Char
 toDList (DS dl) = dl
+{-# INLINE toDList #-}
 
 -- | O(1) Convert a @ShowS@ to a difference string.
 fromShowS ∷ ShowS → DString
 fromShowS = fromDList ∘ DL
+{-# INLINE fromShowS #-}
 
 -- | O(1) Convert a difference string to a @ShowS@.
 toShowS ∷ DString → ShowS
 toShowS = unDL ∘ toDList
+{-# INLINE toShowS #-}
 
 
 --------------------------------------------------------------------------------
@@ -159,18 +167,22 @@ toShowS = unDL ∘ toDList
 -- | O(1) Build a difference string from a single @Char@.
 singleton ∷ Char → DString
 singleton = fromDList ∘ D.singleton
+{-# INLINE singleton #-}
 
 -- | /O(1)/, Prepend a Char to a difference string.
 cons ∷ Char → DString → DString
 cons c ds = fromDList $ D.cons c (toDList ds)
+{-# INLINE cons #-}
 
 -- | /O(1)/, Append a @Char@ to a difference string.
 snoc ∷ DString → Char → DString
 snoc ds c = fromDList $ D.snoc (toDList ds) c
+{-# INLINE snoc #-}
 
 -- | /O(spine)/, Concatenate difference strings.
 concat ∷ [DString] → DString
 concat = fromDList ∘ D.concat ∘ map toDList
+{-# INLINE concat #-}
 
 -- | /O(length ds)/, difference list elimination, head, tail.
 list ∷ α → (Char → DString → α) → DString → α
@@ -190,7 +202,9 @@ tail = list (error "Data.DString.tail: empty list") (flip const)
 -- | Unfoldr for difference strings.
 unfoldr ∷ (α → Maybe (Char, α)) → α → DString
 unfoldr pf b = fromDList $ D.unfoldr pf b
+{-# INLINE unfoldr #-}
 
 -- | Foldr over difference strings.
 foldr  ∷ (Char → α → α) → α → DString → α
 foldr f b = D.foldr f b ∘ toDList
+{-# INLINE foldr #-}
