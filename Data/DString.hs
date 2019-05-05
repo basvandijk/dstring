@@ -4,10 +4,6 @@
            , DeriveDataTypeable
   #-}
 
-#if __GLASGOW_HASKELL__ >= 704
-{-# LANGUAGE Safe #-}
-#endif
-
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.DString
@@ -32,7 +28,6 @@ module Data.DString
     , toString
     , fromDList
     , toDList
-    , fromShowS
     , toShowS
 
     -- * Basic functions
@@ -58,10 +53,18 @@ import Data.Char     ( Char )
 import Data.Function ( ($), const, flip )
 import Data.List     ( map )
 import Data.Maybe    ( Maybe )
-import Data.Monoid   ( Monoid, mempty, mappend )
 import Data.Typeable ( Typeable )
 import Data.String   ( IsString, fromString )
 import Text.Show     ( Show, showsPrec, ShowS, showParen, showString, shows )
+
+import Data.Semigroup as Sem
+-- base >= 4.8: `Monoid` class is exported via `Prelude`
+-- base < 4.11: re-exports `Monoid` class & common newtype wrappers
+-- base >= 4.11: doesn't reexport `Monoid` class anymore
+
+#if MIN_VERSION_base(4,11,0)
+import Data.Monoid   ( Monoid, mempty, mappend )
+#endif
 
 #if MIN_VERSION_base(4,4,0)
 import Data.String   ( String )
@@ -77,7 +80,7 @@ import Prelude       ( fromInteger )
 import Data.Function.Unicode ( (∘) )
 
 -- from dlist:
-import           Data.DList      ( DList(DL), unDL, toList, fromList )
+import           Data.DList      ( DList, apply, toList, fromList )
 import qualified Data.DList as D ( cons, snoc
                                  , foldr, unfoldr
                                  , singleton
@@ -93,7 +96,7 @@ import qualified Data.DList as D ( cons, snoc
 -- contents of the difference string prepended at the given string.
 --
 -- This structure supports O(1) @mappend@ en @snoc@ operations on strings making
--- it very usefull for append-heavy uses such as logging and pretty printing.
+-- it very useful for append-heavy uses such as logging and pretty printing.
 --
 -- You can use it to efficiently show a tree for example: (Note that we use some
 -- handy functions from the @string-combinators@ package)
@@ -119,12 +122,20 @@ instance Show DString where
                      showString "Data.String.fromString " ∘
                      shows (toString ds)
 
-instance Monoid DString where
-    mempty = fromDList mempty
-    ds1 `mappend` ds2 = fromDList $ toDList ds1 `mappend` toDList ds2
-    {-# INLINE mempty #-}
-    {-# INLINE mappend #-}
+instance Sem.Semigroup DString where
+  ds1 <> ds2 = fromDList $ toDList ds1 `mappend` toDList ds2
+  {-# INLINE (<>) #-}
 
+instance Monoid DString where
+  mempty = fromDList mempty
+  {-# INLINE mempty #-}
+
+#if !(MIN_VERSION_base(4,11,0))
+  -- this is redundant starting with base-4.11 / GHC 8.4
+  -- if you want to avoid CPP, you can define `mappend = (<>)` unconditionally
+  mappend = (<>)
+  {-# INLINE mappend #-}
+#endif
 
 --------------------------------------------------------------------------------
 -- Conversions
@@ -149,14 +160,9 @@ toDList ∷ DString → DList Char
 toDList (DS dl) = dl
 {-# INLINE toDList #-}
 
--- | O(1) Convert a @ShowS@ to a difference string.
-fromShowS ∷ ShowS → DString
-fromShowS = fromDList ∘ DL
-{-# INLINE fromShowS #-}
-
 -- | O(1) Convert a difference string to a @ShowS@.
 toShowS ∷ DString → ShowS
-toShowS = unDL ∘ toDList
+toShowS = apply ∘ toDList
 {-# INLINE toShowS #-}
 
 
